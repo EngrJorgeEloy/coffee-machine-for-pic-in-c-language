@@ -1,0 +1,73 @@
+#include <xc.h> // Include the appropriate header for your microcontroller
+
+#define _XTAL_FREQ 4000000 // Define the oscillator frequency
+
+// Port definitions
+#define PORTA PORTA
+#define PORTB PORTB
+#define TRISA TRISA
+#define TRISB TRISB
+
+void lcd_init();
+void lcd_cmd(unsigned char cmd);
+void lcd_out(unsigned char row, unsigned char col, const char *str);
+void delay_ms(unsigned int ms);
+void prepare_coffee();
+
+void main() {
+    TRISA = 0x00; // Set PORTA as output
+    TRISB = 0x01; // Set PORTB.0 as input
+
+    lcd_init();
+    lcd_cmd(0x0C); // Turn off cursor
+
+    while (1) {
+        lcd_out(1, 1, "SELECT (1)COFFEE");
+        lcd_out(2, 1, "(2)COFFEE WITH MILK");
+
+        if (!(PORTA & 0x80)) { // If PORTA.7 is pressed
+            delay_ms(50);
+            PORTA |= 0x04; // Serve coffee
+            lcd_out(1, 1, "YOUR CHOICE IS");
+            lcd_out(2, 1, "   COFFEE     ");
+            delay_ms(2000);
+            prepare_coffee();
+        } else if (!(PORTB & 0x01)) { // If PORTB.0 is pressed
+            delay_ms(50);
+            PORTA |= 0x08; // Serve coffee with milk
+            lcd_out(1, 1, "YOUR CHOICE IS");
+            lcd_out(2, 1, "COFFEE WITH MILK");
+            delay_ms(2000);
+            prepare_coffee();
+        }
+    }
+}
+
+void prepare_coffee() {
+    for (int i = 0; i < 5; i++) {
+        lcd_out(1, 1, "  PLEASE WAIT...  ");
+        for (int k = 20; k > 0; k--) {
+            delay_ms(80);
+            lcd_out(2, k, "PREPARING YOUR ");
+        }
+        delay_ms(200);
+        lcd_out(2, 1, "                ");
+        for (int k = 20; k > 0; k--) {
+            delay_ms(80);
+            lcd_out(2, k, "     COFFEE     ");
+        }
+        delay_ms(200);
+        lcd_out(2, 1, "                ");
+    }
+    
+    for (int i = 0; i < 10; i++) {
+        lcd_out(1, 1, "   YOUR COFFEE  ");
+        lcd_out(2, 1, "   IS READY!    ");
+        delay_ms(200);
+        lcd_out(1, 1, "                ");
+        lcd_out(2, 1, "                ");
+        delay_ms(200);
+    }
+}
+
+// Implement the lcd_init, lcd_cmd, lcd_out, and delay_ms functions here...
