@@ -1,0 +1,1 @@
+This project was made in C language for Pic16f628a so that students can analyze the program and develop their own, it is a very simple coffee machine with two options coffee and coffee with milk, the activation is done by LEDs on the "proteus" a software for electrical circuit simulations with or without programming.
